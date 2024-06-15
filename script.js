@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', initialize);
 
-
 function updateLineStyles(styledContenteditable) {
   const lines = styledContenteditable.innerHTML.split('\n').map(line => line.trim()).join('<br>');
   const content = lines.split('<br>').map(line => `<div class="line">${line || ''}</div>`).join('');
   styledContenteditable.innerHTML = content;
+  styledContenteditable.addEventListener('input', updateLineStyles(styledContenteditable));
 }
-
 
 function initialize() {
   const courseTemplateElement = document.querySelector('#CourseTemplateDiv > code');
@@ -20,24 +19,69 @@ function initialize() {
     document.getElementById('resetTemplateButton').style.display = 'block';
   }
 
-  addEventListeners(courseTemplateElement, styledContenteditable);
+  addEventListeners(courseTemplateElement);
 }
 
-function addEventListeners(courseTemplateElement, styledContenteditable) {
+function addEventListeners(courseTemplateElement) {
   const parentElement = courseTemplateElement.parentNode;
-  styledContenteditable.addEventListener('input', updateLineStyles(styledContenteditable));
 
-  parentElement.addEventListener('input', saveTemplate);
+  // Remove existing event listeners
+  parentElement.removeEventListener('input', handleInput);
+  parentElement.removeEventListener('keydown', handleKeydown);
 
-  parentElement.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
+  // Add new event listeners
+  parentElement.addEventListener('input', handleInput);
+  parentElement.addEventListener('keydown', handleKeydown);
+}
+
+function handleKeydown(event) {
+  const courseTemplateElement = ensureCodeTagExists();
+  const selection = window.getSelection();
+
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    insertNewlineAtCaret();
+    saveTemplate();
+  } else if (event.key === 'Tab') {
+    moveToNextTabbableElement();
+  } else if (event.key === 'Backspace') {
+    if (selection.toString() === '' && courseTemplateElement.innerHTML === '') {
       event.preventDefault();
-      insertNewlineAtCaret();
+    } else if (selection.toString() === '' && selection.anchorOffset === 0 && selection.focusOffset === 0) {
+      event.preventDefault();
+    } else {
       saveTemplate();
-    } else if (event.key === 'Tab') {
-      moveToNextTabbableElement();
+    }
+  }
+}
+
+function handleInput(event) {
+  const courseTemplateElement = ensureCodeTagExists();
+
+  // Remove any <br> elements that might have been inserted before the <code> tag
+  const parentElement = courseTemplateElement.parentNode;
+  Array.from(parentElement.childNodes).forEach(node => {
+    if (node.nodeName === 'BR' && node !== courseTemplateElement) {
+      parentElement.removeChild(node);
     }
   });
+
+  // Ensure the caret remains inside the <code> tag if it becomes empty
+  if (courseTemplateElement.innerHTML === '') {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.setStart(courseTemplateElement, 0);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  // Ensure the codeTag is the first child
+  if (parentElement.firstChild !== courseTemplateElement) {
+    parentElement.insertBefore(courseTemplateElement, parentElement.firstChild);
+  }
+
+  saveTemplate();
 }
 
 function moveToNextTabbableElement() {
@@ -136,7 +180,7 @@ function convertToSnakeCase(str) {
 }
 
 function saveTemplate() {
-  const courseTemplateElement = document.querySelector('#CourseTemplateDiv > code');
+  const courseTemplateElement = ensureCodeTagExists();
   const caretPosition = saveCaretPosition(courseTemplateElement);
 
   localStorage.setItem('courseTemplate', courseTemplateElement.innerHTML);
@@ -152,15 +196,35 @@ function insertNewlineAtCaret() {
 
   const range = selection.getRangeAt(0);
   const newlineNode = document.createTextNode('\n');
+  const twoNewlineNode = document.createTextNode('\n\n');
 
-  range.deleteContents();
-  range.insertNode(newlineNode);
-  range.setStartAfter(newlineNode);
-  range.setEndAfter(newlineNode);
+  const codeElement = range.startContainer.parentNode;
+  const content = codeElement.textContent;
+
+  // Check if the caret is at the end of the code element and the last character is not a newline
+  if (range.startOffset === range.endOffset && range.startOffset === range.startContainer.length) {
+    if (content.endsWith('\n')) {
+      range.insertNode(newlineNode);
+      range.setStartAfter(newlineNode);
+      range.setEndAfter(newlineNode);
+    } else {
+      range.insertNode(twoNewlineNode);
+      range.setStartAfter(twoNewlineNode);
+      range.setEndAfter(twoNewlineNode);
+    }
+  } else {
+    range.deleteContents();
+    range.insertNode(newlineNode);
+    range.setStartAfter(newlineNode);
+    range.setEndAfter(newlineNode);
+  }
 
   selection.removeAllRanges();
   selection.addRange(range);
 }
+
+
+
 
 function saveCaretPosition(context) {
   const selection = window.getSelection();
@@ -251,13 +315,41 @@ function resetTemplate() {
 &lt;/body&gt;
 &lt;/html&gt;`;
 
-  const courseTemplateElement = document.querySelector('#CourseTemplateDiv > code');
+  const courseTemplateElement = ensureCodeTagExists();
   const caretPosition = saveCaretPosition(courseTemplateElement);
-
   courseTemplateElement.innerHTML = defaultTemplate;
-  Prism.highlightElement(courseTemplateElement);
+  const newCode = ensureCodeTagExists();
   localStorage.removeItem('courseTemplate');
-
-  restoreCaretPosition(courseTemplateElement, caretPosition);
+  restoreCaretPosition(newCode.parentNode, caretPosition);
+  addEventListeners(newCode);
+  Prism.highlightElement(newCode);
   document.getElementById('resetTemplateButton').style.display = 'none';
+}
+
+function ensureCodeTagExists() {
+  const courseTemplateDiv = document.getElementById('CourseTemplateDiv');
+  let codeTag = courseTemplateDiv.querySelector('code');
+  if (!codeTag) {
+    codeTag = document.createElement('code');
+    codeTag.className = 'language-html';
+    codeTag.innerHTML = '&nbsp;'; // Add a non-breaking space to keep the caret inside
+    courseTemplateDiv.insertBefore(codeTag, courseTemplateDiv.firstChild);
+
+    // Place caret inside the newly created <code> tag
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.setStart(codeTag, 0);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  } else if (codeTag.innerHTML === '') {
+    codeTag.innerHTML = '&nbsp;'; // Ensure there's always some content to keep the caret inside
+  }
+
+  // Ensure the codeTag is the first child
+  if (courseTemplateDiv.firstChild !== codeTag) {
+    courseTemplateDiv.insertBefore(codeTag, courseTemplateDiv.firstChild);
+  }
+
+  return codeTag;
 }
