@@ -1,0 +1,153 @@
+:root {
+  --DarkerPrimaryColor: rgb(22, 62, 102);
+  --PrimaryColor: rgb(28, 87, 138);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+*:focus {
+  outline: 2px solid black;
+  outline-offset: 2px;
+}
+
+body {
+  background-color: #f9f9f9;
+  font-family: "Noto Sans", sans-serif;
+  margin: 0 1rem 1rem 0.5rem;
+  padding: 0 1rem 1rem 0.5rem;
+}
+
+h1 {
+  color: var(--PrimaryColor);
+  text-align: center;
+}
+
+h2 {
+  margin: unset;
+  margin-bottom: .25em;
+  margin-top: 0;
+  padding: 0;
+}
+
+label {
+  display: block;
+  margin-bottom: .5rem;
+  position: relative;
+}
+
+.container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 1rem;
+  padding: .5rem;
+  width: 100%;
+}
+
+.input-section {
+  flex: 1 1;
+  padding: 1rem;
+}
+
+.one-third {
+  display: flex;
+  flex: 1 1 300px;
+  flex-direction: column;
+  padding: 1rem;
+  width: 33%;
+}
+
+.two-thirds {
+  flex: 2 1 300px;
+  padding: 1rem;
+  width: 66%;
+}
+
+.styled-contenteditable {
+  background-color: white;
+  border: 1px solid #ccc;
+  flex-grow: 1;
+  flex-shrink: 1;
+  font-family: monospace;
+  max-width: 100%;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.styled-contenteditable div:nth-child(odd) {
+  background-color: #f9f9ff;
+  padding: 0.25em;
+}
+
+.styled-contenteditable div:nth-child(even) {
+  background-color: #f3f3ff;
+  padding: 0.25em;
+}
+
+.error-message {
+  background-color: #ffe0e0;
+  color: #750000;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+#CourseTemplateDiv {
+  border: 3px solid #ccc;
+  flex-grow: 1;
+  margin: 0 1rem 0 0;
+  max-height: 550px;
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+.button-section {
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+button {
+  background-color: var(--PrimaryColor);
+  border-color: var(--DarkerPrimaryColor);
+  border-radius: 15px;
+  color: white;
+  padding: .5rem;
+}
+
+@media (max-width: 800px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .one-third {
+    display: block;
+    flex: 1 1;
+    width: 100%;
+  }
+
+  .two-thirds {
+    flex: 1 1;
+    width: 100%;
+  }
+
+  .styled-contenteditable {
+    min-height: 15em;
+  }
+}

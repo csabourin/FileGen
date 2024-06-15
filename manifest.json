@@ -1,0 +1,22 @@
+{
+  "name": "Brightspace Course Files Generator",
+  "short_name": "Course Files Generator",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "Easily generate course files for your Brightspace courses with this handy tool.",
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "https://filegen.christiansabourin.com/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "https://filegen.christiansabourin.com/FileGen.png",
+      "sizes": "227x192",
+      "type": "image/png"
+    }
+  ]
+}

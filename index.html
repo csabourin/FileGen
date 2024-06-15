@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="manifest" content="./manifest.json">
+  <!-- Open Graph Metadata -->
+  <meta property="og:title" content="Brightspace Course Files Generator">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://filegen.christiansabourin.com/">
+  <meta property="og:image" content="https://filegen.christiansabourin.com/FileGen.png">
+  <meta property="og:image:alt" content="Brightspace Course Files Generator Logo">
+  <meta property="og:image:width" content="227">
+  <meta property="og:image:height" content="192">
+  <meta property="og:description"
+    content="Easily generate course files for your Brightspace courses with this handy tool.">
+  <meta property="og:site_name" content="Brightspace Course Files Generator">
+  <!-- Twitter Card Metadata -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Brightspace Course Files Generator">
+  <meta name="twitter:description"
+    content="Easily generate course files for your Brightspace courses with this handy tool.">
+  <meta name="twitter:image" content="https://filegen.christiansabourin.com/FileGen.png">
+  <meta name="twitter:image:alt" content="Brightspace Course Files Generator Logo">
+  <meta name="twitter:image:width" content="227">
+  <meta name="twitter:image:height" content="192">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <style>
+    .token.handlebars .token.delimiter {
+      color: #ffff00 !important;
+      /* Bright yellow */
+      font-weight: bold;
+    }
+
+    .token.handlebars .token.variable {
+      color: #ffff00 !important;
+      /* Bright yellow */
+    }
+
+    .language-html .token.punctuation.double-mustache {
+      color: #ffff00;
+    }
+  </style>
+
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="prism.css">
+  <title>Brightspace Course Files Generator</title>
+</head>
+
+<body>
+  <header>
+    <h1>Brightspace Course Files Generator</h1>
+  </header>
+  <main>
+    <section class="container">
+      <div class="input-section">
+        <h2>Course Code</h2>
+        <label for="CourseCode">Enter the course code:</label>
+        <input type="text" id="CourseCode" placeholder="e.g., DDN123" autocomplete="off">
+      </div>
+      <div class="input-section">
+        <h2>Course Name</h2>
+        <label for="CourseName">Enter the course name:</label>
+        <input type="text" id="CourseName" placeholder="e.g., Introduction to XYZ" autocomplete="off">
+      </div>
+    </section>
+    <section class="container">
+      <div class="input-section one-third">
+        <div class="heading">
+          <h2>Page Titles</h2>
+          <label id="pageTitleLabel" for="CourseTitles">Enter the list of page titles, one per line: (e.g. 1.1
+            Introduction)</label>
+        </div>
+
+
+        <div aria-labelledby="pageTitleLabel" id="CourseTitles" class="styled-contenteditable" contenteditable="true"
+          role="textbox" aria-multiline="true"></div>
+        <p id="courseTitlesError" class="error-message" aria-live="assertive" style="display:none;">Please enter a list
+          of page titles first.</p>
+      </div>
+      <div class="input-section two-thirds">
+        <h2>File Template</h2>
+        <p>The templates codes are:</p>
+        <ol>
+          <li>Title template: {{Template}}</li>
+          <li>Course Code: {{CourseCode}}</li>
+          <li>First Header: {{Header}}</li>
+        </ol>
+        <label id="templateLabel" for="CourseTemplateDiv">Enter the HTML template for the course files:</label>
+        <pre tabindex="0" aria-labelledby="templateLabel" id="CourseTemplateDiv" contenteditable="true" role="textbox"
+          aria-multiline="true" spellcheck="false"><code class="language-html line-numbers">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;!-- Required meta tags --&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"&gt;
+  &lt;!-- Bootstrap CSS --&gt;
+  &lt;link rel="stylesheet" href="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/thirdpartylib/bootstrap-4.3.1/css/bootstrap.min.css"&gt;
+  &lt;!-- Font Awesome CSS --&gt;
+  &lt;link rel="stylesheet" href="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/thirdpartylib/fontawesome-free-5.9.0-web/css/all.min.css"&gt;
+  &lt;!-- Template CSS --&gt;
+  &lt;link rel="stylesheet" href="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/css/styles.min.css"&gt;
+  &lt;link rel="stylesheet" href="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/css/custom.css"&gt;
+  &lt;link rel="stylesheet" href="assets/css/{{CourseCode}}-style.css"&gt;
+  &lt;title&gt;{{Template}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="container-fluid data"&gt;
+    &lt;div class="row"&gt;
+      &lt;div class="col-12 offset-md-1 col-md-10 offset-lg-2 col-lg-8"&gt;
+        &lt;h1&gt;{{Header}}&lt;/h1&gt;
+        &lt;p&gt;Insert your content here.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;!-- Scripts --&gt;
+  &lt;script src="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/thirdpartylib/jquery/jquery-3.4.1.min.js"&gt;&lt;/script&gt;
+  &lt;script src="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/thirdpartylib/popper-js/popper.min.js"&gt;&lt;/script&gt;
+  &lt;script src="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/thirdpartylib/bootstrap-4.3.1/js/bootstrap.min.js"&gt;&lt;/script&gt;
+  &lt;script src="/shared/LCS_HTML_Templates/CSPS_Template_2021/_assets/js/scripts.min.js"&gt;&lt;/script&gt;
+  &lt;script type="module" src="assets/js/{{CourseCode}}-script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </section>
+    <section class="button-section">
+      <button id="resetTemplateButton" style="display: none;" onclick="resetTemplate()">Reset to Default</button>
+      <button onclick="generateHTMLFiles()">Generate Files</button>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script src="prism.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // Extend HTML to include Handlebars syntax
+    Prism.languages['html'] = Prism.languages.extend('html', {
+      'handlebars': {
+        pattern: /{{[\s\S]*?}}/,
+        inside: {
+          'delimiter': {
+            pattern: /{{|}}/,
+            alias: 'punctuation'
+          },
+          'variable': {
+            pattern: /[\s\S]+/,
+            alias: 'variable',
+            inside: {
+              'string': /"(?:[^"\\]|\\.)*"/
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
