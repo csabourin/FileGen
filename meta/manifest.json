@@ -9,12 +9,12 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "https://filegen.christiansabourin.com/favicon.ico",
+      "src": "https://filegen.christiansabourin.com/meta/favicon.ico",
       "sizes": "64x64",
       "type": "image/x-icon"
     },
     {
-      "src": "https://filegen.christiansabourin.com/FileGen.png",
+      "src": "https://filegen.christiansabourin.com/meta/FileGen.png",
       "sizes": "227x192",
       "type": "image/png"
     }
