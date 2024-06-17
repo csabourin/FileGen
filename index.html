@@ -92,7 +92,7 @@
           <li>First Header: {{Header}}</li>
         </ol>
         <label id="templateLabel" for="CourseTemplateDiv">Enter the HTML template for the course files:</label>
-        <pre tabindex="0" aria-labelledby="templateLabel" id="CourseTemplateDiv" contenteditable="true" role="textbox"
+        <pre aria-labelledby="templateLabel" id="CourseTemplateDiv" contenteditable="true" role="textbox"
           aria-multiline="true" spellcheck="false"><code class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
@@ -129,8 +129,10 @@
       </div>
     </section>
     <section class="button-section">
-      <button id="resetTemplateButton" style="display: none;" onclick="resetTemplate()">Reset to Default</button>
-      <button onclick="generateHTMLFiles()">Generate Files</button>
+      <button id="resetTemplateButton" tabindex="0" onclick="resetTemplate()">Reset to
+        Default</button>
+      <button tabindex="0" onclick="generateHTMLFiles()">Generate Files</button>
+
     </section>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>

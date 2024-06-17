@@ -10,13 +10,14 @@ function updateLineStyles(styledContenteditable) {
 function initialize() {
   const courseTemplateElement = document.querySelector('#CourseTemplateDiv > code');
   const savedTemplate = localStorage.getItem('courseTemplate');
-  const styledContenteditable = document.getElementById('CourseTitles');
 
 
   if (savedTemplate) {
     courseTemplateElement.innerHTML = savedTemplate;
     Prism.highlightElement(courseTemplateElement);
-    document.getElementById('resetTemplateButton').style.display = 'block';
+    const resetButton = document.getElementById('resetTemplateButton');
+    resetButton.style.display = 'block';
+
   }
 
   addEventListeners(courseTemplateElement);
@@ -42,9 +43,8 @@ function handleKeydown(event) {
     event.preventDefault();
     insertNewlineAtCaret();
     saveTemplate();
-  } else if (event.key === 'Tab') {
-    moveToNextTabbableElement();
-  } else if (event.key === 'Backspace') {
+  }
+  else if (event.key === 'Backspace') {
     if (selection.toString() === '' && courseTemplateElement.innerHTML === '') {
       event.preventDefault();
     } else if (selection.toString() === '' && selection.anchorOffset === 0 && selection.focusOffset === 0) {
@@ -187,7 +187,9 @@ function saveTemplate() {
   Prism.highlightElement(courseTemplateElement);
   restoreCaretPosition(courseTemplateElement, caretPosition);
 
-  document.getElementById('resetTemplateButton').style.display = 'block';
+  const resetButton = document.getElementById('resetTemplateButton');
+  resetButton.style.display = 'block';
+  resetButton.tabIndex = 0;
 }
 
 function insertNewlineAtCaret() {
@@ -198,19 +200,30 @@ function insertNewlineAtCaret() {
   const newlineNode = document.createTextNode('\n');
   const twoNewlineNode = document.createTextNode('\n\n');
 
-  const codeElement = range.startContainer.parentNode;
-  const content = codeElement.textContent;
+  const startContainer = range.startContainer;
+  const parentElement = startContainer.parentNode.parentNode;
+  const content = parentElement.textContent;
 
-  // Check if the caret is at the end of the code element and the last character is not a newline
-  if (range.startOffset === range.endOffset && range.startOffset === range.startContainer.length) {
-    if (content.endsWith('\n')) {
+  // Check if the caret is at the end of the content in the container
+  if (range.startOffset === range.endOffset && range.startOffset === startContainer.length) {
+    const isAtEnd = (startContainer.nodeType === Node.TEXT_NODE && range.startOffset === startContainer.length) &&
+      (parentElement.textContent.length === startContainer.textContent.length);
+
+    if (isAtEnd) {
+      if (content.endsWith('\n')) {
+        range.insertNode(newlineNode);
+        range.setStartAfter(newlineNode);
+        range.setEndAfter(newlineNode);
+      } else {
+        range.insertNode(twoNewlineNode);
+        range.setStartAfter(twoNewlineNode);
+        range.setEndAfter(twoNewlineNode);
+      }
+    } else {
+      range.deleteContents();
       range.insertNode(newlineNode);
       range.setStartAfter(newlineNode);
       range.setEndAfter(newlineNode);
-    } else {
-      range.insertNode(twoNewlineNode);
-      range.setStartAfter(twoNewlineNode);
-      range.setEndAfter(twoNewlineNode);
     }
   } else {
     range.deleteContents();
@@ -222,9 +235,6 @@ function insertNewlineAtCaret() {
   selection.removeAllRanges();
   selection.addRange(range);
 }
-
-
-
 
 function saveCaretPosition(context) {
   const selection = window.getSelection();
