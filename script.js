@@ -84,16 +84,6 @@ function handleInput(event) {
   saveTemplate();
 }
 
-function moveToNextTabbableElement() {
-  const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-  const elements = Array.prototype.slice.call(document.querySelectorAll(focusableElements));
-  const index = elements.indexOf(document.activeElement);
-  if (index > -1) {
-    const nextElement = elements[index + 1] || elements[0];
-    nextElement.focus();
-  }
-}
-
 function generateHTMLFiles() {
   const courseCode = getTrimmedValue('CourseCode');
   const courseName = getTrimmedValue('CourseName');
